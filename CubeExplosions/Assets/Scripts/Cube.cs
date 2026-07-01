@@ -6,35 +6,23 @@ public class Cube : MonoBehaviour
 {
     [SerializeField]
     [Range(0f, 1f)]
-    private float splitChance = 1f;
+    private float _splitChance = 1f;
 
-    private CubeSpawner spawner;
-    private Rigidbody rb;
-    private CubeVisual visual;
+    private Rigidbody _rigidbody;
+    private CubeVisual _visual;
 
-    public Rigidbody Rigidbody => rb;
-    public CubeVisual Visual => visual;
-    public float SplitChance => splitChance;
+    public float SplitChance => _splitChance;
+    public Rigidbody Rigidbody => _rigidbody;
+    public CubeVisual Visual => _visual;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-        visual = GetComponent<CubeVisual>();
+        _rigidbody = GetComponent<Rigidbody>();
+        _visual = GetComponent<CubeVisual>();
     }
 
-    public void Initialize(CubeSpawner cubeSpawner, float chance)
+    public void Initialize(float splitChance)
     {
-        spawner = cubeSpawner;
-        splitChance = chance;
+        _splitChance = splitChance;
     }
-
-    private void OnMouseDown()
-    {
-        if (Random.value <= splitChance)
-        {
-            spawner.Split(this);
-        }
-
-        Destroy(gameObject);
-    }
-}
+} 

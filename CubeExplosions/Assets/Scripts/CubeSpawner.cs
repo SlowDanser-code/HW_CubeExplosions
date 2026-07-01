@@ -1,74 +1,68 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CubeSpawner : MonoBehaviour
 {
-    [Header("Prefab")]
-    [SerializeField] private Cube cubePrefab;
+    private const float ScaleMultiplier = 0.5f;
 
-    [Header("Start Cube")]
-    [SerializeField] private Vector3 startPosition = new Vector3(0, 5, 0);
+    [SerializeField] private Cube _cubePrefab;
 
-    [Header("Split")]
-    [SerializeField] private int minCubeCount = 2;
-    [SerializeField] private int maxCubeCount = 6;
+    [SerializeField] private int _minimumCubeCount = 2;
+    [SerializeField] private int _maximumCubeCount = 6;
 
-    [SerializeField] private float spawnRadius = 0.3f;
-
-    [Header("Explosion")]
-    [SerializeField] private float explosionForce = 7f;
-    [SerializeField] private float explosionRadius = 3f;
+    [SerializeField] private float _spawnRadius = 0.5f;
+    [SerializeField]
+    private Vector3 _spawnPosition = new(0f, 4f, 0f);
 
     private void Start()
     {
-        SpawnStartCube();
+        Spawn(_spawnPosition, Vector3.one, 1f);
     }
 
-    private void SpawnStartCube()
+    public List<Cube> Spawn(Cube parentCube)
     {
-        Cube cube = Instantiate(
-            cubePrefab,
-            startPosition,
-            Random.rotation);
+        List<Cube> cubes = new();
 
-        cube.Initialize(this, 1f);
+        int cubeCount = Random.Range(
+            _minimumCubeCount,
+            _maximumCubeCount + 1);
 
-        cube.Visual.SetRandomColor();
-    }
+        float splitChance =
+            parentCube.SplitChance * ScaleMultiplier;
 
-    public void Split(Cube parentCube)
-    {
-        int cubeCount = Random.Range(minCubeCount, maxCubeCount + 1);
-
-        Vector3 position = parentCube.transform.position;
-
-        Vector3 newScale =
-            parentCube.transform.localScale * 0.5f;
-
-        float newChance =
-            parentCube.SplitChance * 0.5f;
+        Vector3 cubeScale =
+            parentCube.transform.localScale * ScaleMultiplier;
 
         for (int i = 0; i < cubeCount; i++)
         {
-            Vector3 spawnPosition =
-                position + Random.insideUnitSphere * spawnRadius;
+            Vector3 position =
+                parentCube.transform.position +
+                Random.insideUnitSphere * _spawnRadius;
 
-            Cube cube = Instantiate(
-                cubePrefab,
-                spawnPosition,
-                Random.rotation);
-
-            cube.transform.localScale = newScale;
-
-            cube.Initialize(this, newChance);
-
-            cube.Visual.SetRandomColor();
-
-            cube.Rigidbody.AddExplosionForce(
-                explosionForce,
+            Cube cube = Spawn(
                 position,
-                explosionRadius,
-                0.5f,
-                ForceMode.Impulse);
+                cubeScale,
+                splitChance);
+
+            cubes.Add(cube);
         }
+
+        return cubes;
+    }
+
+    public Cube Spawn(Vector3 position, Vector3 scale, float splitChance)
+    {
+        Cube cube = Instantiate(
+            _cubePrefab,
+            position,
+            Random.rotation);
+
+        cube.transform.localScale = scale;
+
+        cube.Initialize(splitChance);
+
+        cube.Visual.SetRandomColor();
+
+        return cube;
     }
 }

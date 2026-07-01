@@ -3,19 +3,19 @@ using UnityEngine;
 [RequireComponent(typeof(Renderer))]
 public class CubeVisual : MonoBehaviour
 {
-    [SerializeField] private Renderer cubeRenderer;
+    [SerializeField] private Renderer _renderer;
 
     private void Awake()
     {
-        if (cubeRenderer == null)
-            cubeRenderer = GetComponent<Renderer>();
+        if (_renderer == null)
+            _renderer = GetComponent<Renderer>();
     }
 
     public void SetRandomColor()
     {
-        cubeRenderer.material.color = new Color(
-            Random.value,
-            Random.value,
-            Random.value);
+        _renderer.material.color = Random.ColorHSV(
+            0f, 1f,
+            0.6f, 1f,
+            0.6f, 1f);
     }
 }
