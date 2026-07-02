@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class InputReader : MonoBehaviour
 {
-    public event Action<Vector2> LeftMouseButtonClicked;
+    [SerializeField] private int _selectionButtonIndex = 0;
+
+    public event Action<Vector2> SelectionRequested;
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            LeftMouseButtonClicked?.Invoke(Input.mousePosition);
-        }
+        if (Input.GetMouseButtonDown(_selectionButtonIndex))
+            SelectionRequested?.Invoke(Input.mousePosition);
     }
 }
