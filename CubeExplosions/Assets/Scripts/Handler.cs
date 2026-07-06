@@ -24,6 +24,10 @@ public class Handler : MonoBehaviour
             IReadOnlyList<Cube> fragments = _spawner.SpawnFragments(cube);
             _exploder.Explode(fragments, cube.transform.position);
         }
+        else
+        {
+            _exploder.Explode(cube);
+        }
 
         _spawner.Remove(cube);
     }
